@@ -20,6 +20,21 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Require linear pull-request commits
+        if: github.event_name == 'pull_request'
+        shell: pwsh
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          $mergeCommits = @(git rev-list --min-parents=2 "$env:BASE_SHA..$env:HEAD_SHA")
+          if ($mergeCommits.Count -gt 0) {
+            Write-Error "Pull-request commits must be linear. Rebase onto main instead of merging main into the branch."
+            exit 1
+          }
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v6
