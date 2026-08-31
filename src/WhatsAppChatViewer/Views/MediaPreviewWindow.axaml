@@ -1,0 +1,363 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:WhatsAppChatViewer.Controls"
+        x:Class="WhatsAppChatViewer.Views.MediaPreviewWindow"
+        Width="1120"
+        Height="820"
+        MinWidth="700"
+        MinHeight="520"
+        WindowStartupLocation="Manual"
+        Background="#0B141A"
+        Title="Attachment">
+  <Window.Styles>
+    <Style Selector="ListBox.gallery">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+    </Style>
+    <Style Selector="ListBox.gallery ListBoxItem">
+      <Setter Property="Padding" Value="3" />
+      <Setter Property="Margin" Value="1,0" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="FocusAdorner" Value="{x:Null}" />
+    </Style>
+    <Style Selector="ListBox.gallery ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#00A884" />
+    </Style>
+    <Style Selector="Button.gallery-expand">
+      <Setter Property="Width" Value="42" />
+      <Setter Property="Height" Value="24" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Background" Value="#E6202C33" />
+      <Setter Property="BorderBrush" Value="#53656F" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Foreground" Value="#D1D7DB" />
+      <Setter Property="FocusAdorner" Value="{x:Null}" />
+    </Style>
+    <Style Selector="Button.gallery-expand:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#F52A3942" />
+    </Style>
+    <Style Selector="ListBox.drawer-rows">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    </Style>
+    <Style Selector="ListBox.drawer-rows ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="0,0,0,2" />
+      <Setter Property="MinHeight" Value="70" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="FocusAdorner" Value="{x:Null}" />
+    </Style>
+    <Style Selector="ListBox.drawer-rows ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.drawer-thumbnail">
+      <Setter Property="Width" Value="90" />
+      <Setter Property="Height" Value="70" />
+      <Setter Property="Padding" Value="4" />
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="FocusAdorner" Value="{x:Null}" />
+    </Style>
+    <Style Selector="Button.drawer-thumbnail:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#2A3942" />
+      <Setter Property="BorderBrush" Value="#53656F" />
+    </Style>
+    <Style Selector="Button.drawer-thumbnail.current">
+      <Setter Property="Background" Value="#163C38" />
+      <Setter Property="BorderBrush" Value="#00A884" />
+      <Setter Property="BorderThickness" Value="2" />
+    </Style>
+    <Style Selector="Button.viewer-nav">
+      <Setter Property="Width" Value="48" />
+      <Setter Property="Height" Value="68" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="CornerRadius" Value="24" />
+      <Setter Property="Background" Value="#B3202C33" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="Button.viewer-nav:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#D12A3942" />
+    </Style>
+  </Window.Styles>
+
+  <Grid x:Name="RootGrid" RowDefinitions="64,*,86,58">
+    <Grid x:Name="ChromeHeader"
+          Grid.Row="0"
+          Background="#202C33"
+          ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+      <Button Classes="icon-button" Margin="12,0,0,0" Click="Close_Click">
+        <PathIcon Data="{StaticResource ArrowBackIcon}" Width="20" Height="20" />
+        <ToolTip.Tip>Close</ToolTip.Tip>
+      </Button>
+      <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0" Spacing="2">
+        <TextBlock x:Name="FileNameText"
+                   FontWeight="SemiBold"
+                   FontSize="15"
+                   TextTrimming="CharacterEllipsis" />
+        <TextBlock x:Name="FileDetailsText" FontSize="12" Foreground="#8696A0" />
+      </StackPanel>
+      <TextBlock x:Name="CurrentMediaDateText"
+                 Grid.Column="2"
+                 IsVisible="False"
+                 MaxWidth="230"
+                 Margin="16,0,8,0"
+                 VerticalAlignment="Center"
+                 TextAlignment="Right"
+                 TextTrimming="CharacterEllipsis"
+                 FontSize="12"
+                 Foreground="#AEBAC1" />
+      <Button Grid.Column="3" Classes="icon-button" Click="ToggleFullscreen_Click">
+        <PathIcon Data="{StaticResource FullscreenIcon}" Width="20" Height="20" />
+        <ToolTip.Tip>Fullscreen (F11)</ToolTip.Tip>
+      </Button>
+      <Button Grid.Column="4" Classes="icon-button" Margin="0,0,12,0" Click="Save_Click">
+        <PathIcon Data="{StaticResource DownloadIcon}" Width="20" Height="20" />
+        <ToolTip.Tip>Save as…</ToolTip.Tip>
+      </Button>
+    </Grid>
+
+    <Grid x:Name="PreviewSurface" Grid.Row="1" Margin="18">
+      <Image x:Name="FullImage"
+             Stretch="Uniform"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             IsVisible="False" />
+
+      <controls:LazyArchiveVideoPlayer x:Name="VideoPlayer"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"
+                                       IsVisible="False" />
+
+      <StackPanel x:Name="GenericPreview"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Spacing="18">
+        <Border Width="108" Height="108" CornerRadius="54" Background="#202C33">
+          <TextBlock x:Name="MediaIcon"
+                     FontSize="42"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
+        </Border>
+        <TextBlock x:Name="MediaTypeText"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   HorizontalAlignment="Center" />
+        <TextBlock x:Name="GenericDescription"
+                   Text="This entry stays inside the ZIP until you open or save it."
+                   MaxWidth="460"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   Foreground="#8696A0" />
+        <Button Classes="primary"
+                Content="Open with default app"
+                HorizontalAlignment="Center"
+                Click="OpenExternal_Click" />
+      </StackPanel>
+
+      <Button x:Name="PreviousButton"
+              Classes="viewer-nav"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Center"
+              Margin="6,0,0,0"
+              IsVisible="False"
+              Click="Previous_Click">
+        <PathIcon Data="{StaticResource ArrowBackIcon}" Width="24" Height="24" />
+        <ToolTip.Tip>Previous media (Page Up)</ToolTip.Tip>
+      </Button>
+
+      <Button x:Name="NextButton"
+              Classes="viewer-nav"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Center"
+              Margin="0,0,6,0"
+              IsVisible="False"
+              Click="Next_Click">
+        <PathIcon Data="{StaticResource ArrowForwardIcon}" Width="24" Height="24" />
+        <ToolTip.Tip>Next media (Page Down)</ToolTip.Tip>
+      </Button>
+
+      <Border x:Name="BusyOverlay" IsVisible="False" Background="#CC0B141A" CornerRadius="10">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+          <ProgressBar x:Name="OperationProgress" Width="260" Height="5" IsIndeterminate="True" />
+          <TextBlock x:Name="OperationText"
+                     Text="Reading selected entry…"
+                     HorizontalAlignment="Center" />
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <Border x:Name="GalleryStripContainer"
+            Grid.Row="2"
+            IsVisible="False"
+            Background="#111B21"
+            BorderBrush="#233138"
+            BorderThickness="0,1,0,1"
+            Padding="14,9"
+            PointerEntered="GalleryStripContainer_PointerEntered"
+            PointerExited="GalleryStripContainer_PointerExited">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+        <ListBox x:Name="GalleryStrip"
+                 Classes="gallery"
+                 Cursor="Hand"
+                 SelectionChanged="GalleryStrip_SelectionChanged">
+          <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+              <VirtualizingStackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+          </ListBox.ItemsPanel>
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <controls:LazyGalleryThumbnail />
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock x:Name="GalleryPositionText"
+                   Grid.Column="1"
+                   MinWidth="70"
+                   Foreground="#8696A0"
+                   FontSize="12"
+                   TextAlignment="Right"
+                   VerticalAlignment="Center" />
+        <Button x:Name="ExpandGalleryButton"
+                Grid.ColumnSpan="2"
+                Classes="gallery-expand"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                ZIndex="5"
+                Opacity="0"
+                IsHitTestVisible="False"
+                Click="ExpandGallery_Click">
+          <PathIcon Data="{StaticResource ChevronDownIcon}"
+                    Width="16"
+                    Height="16"
+                    RenderTransformOrigin="50%,50%">
+            <PathIcon.RenderTransform>
+              <RotateTransform Angle="180" />
+            </PathIcon.RenderTransform>
+          </PathIcon>
+          <ToolTip.Tip>Show all media</ToolTip.Tip>
+        </Button>
+      </Grid>
+    </Border>
+
+    <Grid x:Name="FooterBar"
+          Grid.Row="3"
+          Background="#111B21"
+          ColumnDefinitions="*,Auto">
+      <TextBlock x:Name="FooterText"
+                 VerticalAlignment="Center"
+                 Foreground="#8696A0"
+                 Margin="20,0,0,0"
+                 TextTrimming="CharacterEllipsis" />
+      <Button Grid.Column="1"
+              Classes="primary"
+              Content="Open externally"
+              VerticalAlignment="Center"
+              Margin="0,0,20,0"
+              Padding="16,7"
+               Click="OpenExternal_Click" />
+    </Grid>
+
+    <Border x:Name="GalleryDrawer"
+            Grid.Row="1"
+            Grid.RowSpan="3"
+            ZIndex="50"
+            IsVisible="False"
+            Background="#F70B141A"
+            BorderBrush="#2A3942"
+            BorderThickness="0,1,0,0">
+      <Grid RowDefinitions="58,*">
+        <Border Background="#111B21"
+                BorderBrush="#233138"
+                BorderThickness="0,0,0,1"
+                Padding="20,0">
+          <Grid ColumnDefinitions="*,Auto">
+            <StackPanel VerticalAlignment="Center" Spacing="2">
+              <TextBlock Text="Media gallery"
+                         FontSize="17"
+                         FontWeight="SemiBold"
+                         Foreground="#E9EDEF" />
+              <TextBlock x:Name="GalleryDrawerCountText"
+                         FontSize="12"
+                         Foreground="#8696A0" />
+            </StackPanel>
+            <Button Grid.Column="1"
+                    Classes="icon-button"
+                    Width="42"
+                    Height="42"
+                    VerticalAlignment="Center"
+                    Click="CollapseGallery_Click">
+              <PathIcon Data="{StaticResource ChevronDownIcon}" Width="19" Height="19" />
+              <ToolTip.Tip>Collapse media gallery</ToolTip.Tip>
+            </Button>
+          </Grid>
+        </Border>
+
+        <ListBox x:Name="GalleryDrawerRows"
+                 Grid.Row="1"
+                 Classes="drawer-rows"
+                 Margin="20,14,10,18"
+                 Focusable="False">
+          <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+              <VirtualizingStackPanel CacheLength="0.15" />
+            </ItemsPanelTemplate>
+          </ListBox.ItemsPanel>
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <ItemsControl ItemsSource="{Binding}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Button Classes="drawer-thumbnail"
+                            Classes.current="{Binding IsCurrent}"
+                            Click="GalleryDrawerItem_Click"
+                            AutomationProperties.Name="{Binding Attachment.FileName}">
+                      <controls:LazyGalleryThumbnail />
+                    </Button>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Border x:Name="GalleryDrawerLoading"
+                Grid.Row="1"
+                ZIndex="2"
+                IsVisible="False"
+                IsHitTestVisible="False"
+                Background="#D90B141A">
+          <StackPanel HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Spacing="8">
+            <TextBlock Text="Preparing media gallery"
+                       FontSize="14"
+                       Foreground="#D1D7DB"
+                       HorizontalAlignment="Center" />
+            <TextBlock Text="Thumbnails will fill in progressively"
+                       FontSize="12"
+                       Foreground="#8696A0"
+                       HorizontalAlignment="Center" />
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

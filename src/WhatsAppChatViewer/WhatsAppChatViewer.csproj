@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>WhatsAppChatViewer</AssemblyName>
+    <RootNamespace>WhatsAppChatViewer</RootNamespace>
+    <AssemblyTitle>WhatsApp Chat Viewer</AssemblyTitle>
+    <Product>WhatsApp Chat Viewer</Product>
+    <Description>A private, read-only viewer for WhatsApp ZIP chat exports.</Description>
+    <Authors>Victor Zakharov</Authors>
+    <Copyright>Copyright © 2026 Victor Zakharov</Copyright>
+    <Version>0.1.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/VictorZakharov/whatsapp-chat-viewer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/VictorZakharov/whatsapp-chat-viewer.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <IsWindowsBuild Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</IsWindowsBuild>
+    <AngleNativeNoticeVersion>2.1.27548.20260419</AngleNativeNoticeVersion>
+    <SkiaSharpNoticeVersion>3.119.4</SkiaSharpNoticeVersion>
+    <HarfBuzzSharpNoticeVersion>8.3.1.3</HarfBuzzSharpNoticeVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.1" />
+    <PackageReference Include="LibVLCSharp.Avalonia" Version="3.10.1" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.23.1"
+                      Condition="'$(IsWindowsBuild)' == 'true'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE"
+          Link="LICENSE.txt"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\..\THIRD-PARTY-NOTICES.md"
+          Link="THIRD-PARTY-NOTICES.md"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\..\LICENSES\**\*"
+          Link="LICENSES\%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IsWindowsBuild)' == 'true'">
+    <None Include="$(NuGetPackageRoot)avalonia.angle.windows.natives\$(AngleNativeNoticeVersion)\LICENSE"
+          Link="LICENSES\Avalonia.Angle.Windows.Natives-LICENSE.txt"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+    <None Include="$(NuGetPackageRoot)skiasharp.nativeassets.win32\$(SkiaSharpNoticeVersion)\LICENSE.txt"
+          Link="LICENSES\SkiaSharp-LICENSE.txt"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+    <None Include="$(NuGetPackageRoot)skiasharp.nativeassets.win32\$(SkiaSharpNoticeVersion)\THIRD-PARTY-NOTICES.txt"
+          Link="LICENSES\SkiaSharp-THIRD-PARTY-NOTICES.txt"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+    <None Include="$(NuGetPackageRoot)harfbuzzsharp.nativeassets.win32\$(HarfBuzzSharpNoticeVersion)\LICENSE.txt"
+          Link="LICENSES\HarfBuzzSharp-LICENSE.txt"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+    <None Include="$(NuGetPackageRoot)harfbuzzsharp.nativeassets.win32\$(HarfBuzzSharpNoticeVersion)\THIRD-PARTY-NOTICES.txt"
+          Link="LICENSES\HarfBuzzSharp-THIRD-PARTY-NOTICES.txt"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,175 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="WhatsAppChatViewer.Views.ArchiveSelectionWindow"
+        Title="Choose WhatsApp archives"
+        Width="720"
+        Height="590"
+        MinWidth="560"
+        MinHeight="430"
+        WindowStartupLocation="Manual"
+        Background="{StaticResource AppBackgroundBrush}">
+  <Window.Styles>
+    <Style Selector="Button.text-button">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="Button.text-button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#233138" />
+    </Style>
+    <Style Selector="Button.dialog-secondary">
+      <Setter Property="Height" Value="42" />
+      <Setter Property="MinWidth" Value="104" />
+      <Setter Property="Padding" Value="18,8" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="#3B4A54" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Foreground" Value="#D1D7DB" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Button.dialog-secondary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#233138" />
+    </Style>
+    <Style Selector="Button.dialog-primary">
+      <Setter Property="Height" Value="42" />
+      <Setter Property="MinWidth" Value="148" />
+      <Setter Property="Padding" Value="20,8" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+  </Window.Styles>
+  <Grid RowDefinitions="Auto,*,Auto">
+    <Border Background="#202C33" Padding="24,21">
+      <Grid ColumnDefinitions="52,*" ColumnSpacing="15">
+        <Border Width="48"
+                Height="48"
+                CornerRadius="24"
+                Background="#153C37">
+          <PathIcon Data="{StaticResource FolderIcon}"
+                    Width="22"
+                    Height="22"
+                    Foreground="{StaticResource PrimaryBrush}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+        </Border>
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+          <TextBlock Text="Choose chats to open"
+                     FontSize="20"
+                     FontWeight="SemiBold" />
+          <TextBlock Text="Several ZIP files were found. Select one or more WhatsApp exports."
+                     FontSize="12"
+                     Foreground="#8696A0"
+                     TextWrapping="Wrap" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="1" RowDefinitions="Auto,*" Margin="20,16,20,12">
+      <Grid ColumnDefinitions="*,Auto,Auto" Margin="4,0,4,12">
+        <TextBlock x:Name="SelectionSummaryText"
+                   VerticalAlignment="Center"
+                   Foreground="#AEBAC1"
+                   FontSize="12" />
+        <Button Grid.Column="1"
+                Classes="text-button"
+                Content="Select all"
+                Click="SelectAll_Click"
+                Margin="0,0,5,0" />
+        <Button Grid.Column="2"
+                Classes="text-button"
+                Content="Clear"
+                Click="Clear_Click" />
+      </Grid>
+
+      <ListBox Grid.Row="1"
+               ItemsSource="{Binding Choices}"
+               Background="#111B21"
+               BorderBrush="#2A3942"
+               BorderThickness="1"
+               CornerRadius="10"
+               Padding="6"
+               SelectionMode="Single">
+        <ListBox.Styles>
+          <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0,2" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="FocusAdorner" Value="{x:Null}" />
+          </Style>
+          <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+          </Style>
+          <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+          </Style>
+        </ListBox.Styles>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Background="#18252C"
+                    CornerRadius="8"
+                    Padding="14,11">
+              <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="13">
+                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                          VerticalAlignment="Center"
+                          AutomationProperties.Name="{Binding FileName}" />
+                <StackPanel Grid.Column="1" Spacing="3">
+                  <TextBlock Text="{Binding FileName}"
+                             FontSize="14"
+                             FontWeight="SemiBold"
+                             TextTrimming="CharacterEllipsis" />
+                  <TextBlock Text="{Binding Folder}"
+                             FontSize="11"
+                             Foreground="#667781"
+                             TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+                <Border Grid.Column="2"
+                        Background="#22343D"
+                        CornerRadius="10"
+                        Padding="9,3"
+                        VerticalAlignment="Center">
+                  <TextBlock Text="{Binding SizeText}"
+                             FontSize="10"
+                             Foreground="#AEBAC1" />
+                </Border>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
+
+    <Border Grid.Row="2"
+            Background="#111B21"
+            BorderBrush="#2A3942"
+            BorderThickness="0,1,0,0"
+            Padding="24,16">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+        <TextBlock Text="ZIP files stay in place; media is loaded only when needed."
+                   Foreground="#8696A0"
+                   FontSize="11"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center"
+                   Margin="2,0,16,0" />
+        <StackPanel Grid.Column="1"
+                    Orientation="Horizontal"
+                    Spacing="10"
+                    VerticalAlignment="Center">
+          <Button Classes="dialog-secondary"
+                  Content="Cancel"
+                  Click="Cancel_Click" />
+          <Button x:Name="OpenSelectedButton"
+                  Classes="dialog-primary"
+                  Content="Open selected"
+                  Click="OpenSelected_Click" />
+        </StackPanel>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

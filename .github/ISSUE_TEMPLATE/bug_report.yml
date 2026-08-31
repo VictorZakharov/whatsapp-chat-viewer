@@ -1,0 +1,42 @@
+name: Bug report
+description: Report reproducible incorrect behavior
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Privacy warning:** do not upload a real WhatsApp export or an unredacted screenshot. Use synthetic data with fictional messages.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: 0.1.0 or commit SHA
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Windows version, architecture, .NET SDK
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the expected and actual behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Use a minimal synthetic export if sample data is needed.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Additional context
+      description: Paste sanitized logs or attach fully redacted screenshots.

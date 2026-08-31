@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WhatsAppChatViewer.Controls.LazyArchiveImage"
+             Width="420"
+             MinHeight="150">
+  <Border CornerRadius="8"
+          ClipToBounds="True"
+          Background="#111B21">
+    <Grid>
+      <Image x:Name="PreviewImage"
+             Stretch="Uniform"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch" />
+
+      <Grid x:Name="LoadingPanel" Background="#1B272E">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="9">
+          <ProgressBar Width="86" Height="3" IsIndeterminate="True" />
+          <TextBlock Text="Loading from ZIP…"
+                     FontSize="12"
+                     Foreground="#8696A0"
+                     HorizontalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+
+      <Border x:Name="ErrorPanel" IsVisible="False" Background="#1B272E">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="7">
+          <TextBlock Text="▧" FontSize="30" Foreground="#8696A0" HorizontalAlignment="Center" />
+          <TextBlock x:Name="ErrorText" Text="Preview unavailable" FontSize="12" Foreground="#8696A0" />
+        </StackPanel>
+      </Border>
+
+      <Button x:Name="OpenImageButton"
+              AutomationProperties.Name="Open image"
+              Background="Transparent"
+              BorderThickness="0"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Click="OpenImage_Click">
+        <ToolTip.Tip>Open attachment</ToolTip.Tip>
+      </Button>
+
+      <Border HorizontalAlignment="Right"
+              VerticalAlignment="Bottom"
+              Margin="0,0,8,8"
+              Padding="7,3"
+              CornerRadius="8"
+              Background="#990B141A">
+        <TextBlock Text="↗" FontSize="12" Foreground="White" />
+      </Border>
+    </Grid>
+  </Border>
+</UserControl>

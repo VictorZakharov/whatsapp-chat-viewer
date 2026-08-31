@@ -1,0 +1,274 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WhatsAppChatViewer.Controls.VideoPlayerOverlay"
+             Background="Transparent"
+             Focusable="True"
+             PointerPressed="Overlay_PointerPressed">
+  <UserControl.Resources>
+    <ControlTheme x:Key="PlayerSliderRepeatButtonTheme" TargetType="RepeatButton">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Grid Background="Transparent">
+            <Border Height="3"
+                    CornerRadius="2"
+                    Background="{TemplateBinding Background}"
+                    VerticalAlignment="Center" />
+          </Grid>
+        </ControlTemplate>
+      </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="PlayerSliderThumbTheme" TargetType="Thumb">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Ellipse Fill="{TemplateBinding Background}"
+                   Stroke="{TemplateBinding BorderBrush}"
+                   StrokeThickness="{TemplateBinding BorderThickness}" />
+        </ControlTemplate>
+      </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="PlayerSliderTheme" TargetType="Slider">
+      <Setter Property="Background" Value="#667781" />
+      <Setter Property="Foreground" Value="#008DD4" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="Transparent"
+                  Padding="10,0"
+                  ClipToBounds="False">
+            <Track Name="PART_Track"
+                   Minimum="{TemplateBinding Minimum}"
+                   Maximum="{TemplateBinding Maximum}"
+                   Value="{TemplateBinding Value, Mode=TwoWay}"
+                   IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                   Orientation="Horizontal">
+              <Track.DecreaseButton>
+                <RepeatButton Name="PART_DecreaseButton"
+                              Theme="{StaticResource PlayerSliderRepeatButtonTheme}"
+                              Background="{TemplateBinding Foreground}"
+                              Focusable="False" />
+              </Track.DecreaseButton>
+              <Track.IncreaseButton>
+                <RepeatButton Name="PART_IncreaseButton"
+                              Theme="{StaticResource PlayerSliderRepeatButtonTheme}"
+                              Background="{TemplateBinding Background}"
+                              Focusable="False" />
+              </Track.IncreaseButton>
+              <Track.Thumb>
+                <Thumb Name="PART_Thumb"
+                       Width="18"
+                       Height="18"
+                       Background="#008DD4"
+                       BorderBrush="#008DD4"
+                       BorderThickness="0"
+                       Theme="{StaticResource PlayerSliderThumbTheme}" />
+              </Track.Thumb>
+            </Track>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </ControlTheme>
+  </UserControl.Resources>
+
+  <UserControl.Styles>
+    <Style Selector="Button.video-control">
+      <Setter Property="Width" Value="32" />
+      <Setter Property="Height" Value="30" />
+      <Setter Property="MinWidth" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="CornerRadius" Value="15" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.video-control:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#3AFFFFFF" />
+    </Style>
+    <Style Selector="Button.video-surface">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="CornerRadius" Value="0" />
+    </Style>
+    <Style Selector="Button.video-surface:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.video-surface:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.video-nav">
+      <Setter Property="Width" Value="44" />
+      <Setter Property="Height" Value="58" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="CornerRadius" Value="22" />
+      <Setter Property="Background" Value="#C9202C33" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.video-nav:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#EB2A3942" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid>
+    <!-- This sits above the native video surface and below every visible control. -->
+    <Button AutomationProperties.Name="Play or pause video"
+            Classes="video-surface"
+            Focusable="False"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Click="PlayPause_Click" />
+
+    <Button x:Name="PreviousMediaButton"
+            AutomationProperties.Name="Previous media"
+            Classes="video-nav"
+            IsVisible="False"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Margin="12,0,0,0"
+            Click="PreviousMedia_Click">
+      <PathIcon Data="{StaticResource ArrowBackIcon}" Width="23" Height="23" />
+      <ToolTip.Tip>Previous media (Page Up)</ToolTip.Tip>
+    </Button>
+
+    <Button x:Name="NextMediaButton"
+            AutomationProperties.Name="Next media"
+            Classes="video-nav"
+            IsVisible="False"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Margin="0,0,12,0"
+            Click="NextMedia_Click">
+      <PathIcon Data="{StaticResource ArrowForwardIcon}" Width="23" Height="23" />
+      <ToolTip.Tip>Next media (Page Down)</ToolTip.Tip>
+    </Button>
+
+    <Button x:Name="CenterPlayButton"
+            AutomationProperties.Name="Play or pause"
+            Width="62"
+            Height="62"
+            Padding="0"
+            CornerRadius="31"
+            Background="#B3202C33"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Click="PlayPause_Click">
+      <PathIcon Data="{StaticResource PlayIcon}"
+                Width="28"
+                Height="28"
+                Margin="4,0,0,0"
+                Foreground="White" />
+    </Button>
+
+    <Border x:Name="LoadingPanel"
+            IsVisible="True"
+            Background="#990B141A"
+            CornerRadius="7"
+            Padding="14,9"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+      <StackPanel Orientation="Horizontal" Spacing="9">
+        <ProgressBar Width="55" Height="3" IsIndeterminate="True" VerticalAlignment="Center" />
+        <TextBlock Text="Opening video…" Foreground="White" FontSize="12" />
+      </StackPanel>
+    </Border>
+
+    <Border x:Name="ControlsPanel"
+            Height="80"
+            Background="#A60B141A"
+            BorderBrush="#663B4A54"
+            BorderThickness="0,1,0,0"
+            VerticalAlignment="Bottom"
+            Padding="8,4">
+      <Grid RowDefinitions="34,36" RowSpacing="2">
+        <Slider x:Name="TimelineSlider"
+                AutomationProperties.Name="Video position"
+                Theme="{StaticResource PlayerSliderTheme}"
+                Minimum="0"
+                Maximum="1"
+                Value="0"
+                Height="32"
+                MinHeight="0"
+                VerticalAlignment="Center" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto,58,Auto,Auto,Auto" ColumnSpacing="3">
+          <Button x:Name="TransportPlayButton"
+                  AutomationProperties.Name="Play or pause"
+                  Classes="video-control"
+                  Click="PlayPause_Click">
+            <Grid>
+              <PathIcon x:Name="PlayIcon" Data="{StaticResource PlayIcon}" Width="20" Height="20" />
+              <PathIcon x:Name="PauseIcon" Data="{StaticResource PauseIcon}" Width="20" Height="20" IsVisible="False" />
+            </Grid>
+            <ToolTip.Tip>Play or pause (Space)</ToolTip.Tip>
+          </Button>
+
+          <TextBlock x:Name="TimeText"
+                     Grid.Column="1"
+                     Text="00:00 / 00:00"
+                     FontSize="10"
+                     Foreground="#E9EDEF"
+                     VerticalAlignment="Center"
+                     MinWidth="80" />
+
+          <Button x:Name="MuteButton"
+                  Grid.Column="3"
+                  AutomationProperties.Name="Mute"
+                  Classes="video-control"
+                  Click="Mute_Click">
+            <Grid>
+              <PathIcon x:Name="VolumeIcon" Data="{StaticResource VolumeHighIcon}" Width="20" Height="20" />
+              <PathIcon x:Name="MutedIcon" Data="{StaticResource VolumeOffIcon}" Width="20" Height="20" IsVisible="False" />
+            </Grid>
+            <ToolTip.Tip>Mute (M)</ToolTip.Tip>
+          </Button>
+
+          <Slider x:Name="VolumeSlider"
+                  Grid.Column="4"
+                  AutomationProperties.Name="Volume"
+                  Theme="{StaticResource PlayerSliderTheme}"
+                  Minimum="0"
+                  Maximum="100"
+                  Value="80"
+                  Width="58"
+                  MinWidth="0"
+                  MinHeight="0"
+                  Height="32"
+                  VerticalAlignment="Center" />
+
+          <Button x:Name="RotateLeftButton"
+                  Grid.Column="5"
+                  AutomationProperties.Name="Rotate video left"
+                  Classes="video-control"
+                  Click="RotateLeft_Click">
+            <PathIcon Data="{StaticResource RotateLeftIcon}" Width="19" Height="19" />
+            <ToolTip.Tip>Rotate left (Shift+R)</ToolTip.Tip>
+          </Button>
+
+          <Button x:Name="RotateRightButton"
+                  Grid.Column="6"
+                  AutomationProperties.Name="Rotate video right"
+                  Classes="video-control"
+                  Click="RotateRight_Click">
+            <PathIcon Data="{StaticResource RotateRightIcon}" Width="19" Height="19" />
+            <ToolTip.Tip>Rotate right (R)</ToolTip.Tip>
+          </Button>
+
+          <Button x:Name="FullscreenButton"
+                  Grid.Column="7"
+                  AutomationProperties.Name="Fullscreen"
+                  Classes="video-control"
+                  Click="Fullscreen_Click">
+            <Grid>
+              <PathIcon x:Name="FullscreenIcon" Data="{StaticResource FullscreenIcon}" Width="20" Height="20" />
+              <PathIcon x:Name="FullscreenExitIcon" Data="{StaticResource FullscreenExitIcon}" Width="20" Height="20" IsVisible="False" />
+            </Grid>
+            <ToolTip.Tip>Fullscreen (F)</ToolTip.Tip>
+          </Button>
+        </Grid>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

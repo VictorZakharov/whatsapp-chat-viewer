@@ -1,0 +1,20 @@
+# Build and IDE output
+**/bin/
+**/obj/
+.vs/
+.idea/
+*.user
+*.suo
+TestResults/
+artifacts/
+publish/
+
+# Local launch shortcuts
+*.lnk
+
+# WhatsApp exports are private and can be very large.
+*.zip
+*.7z
+*.rar
+/exports/
+/private/

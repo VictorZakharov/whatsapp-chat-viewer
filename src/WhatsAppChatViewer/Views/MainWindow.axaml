@@ -1,0 +1,556 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:WhatsAppChatViewer.Controls"
+        x:Class="WhatsAppChatViewer.Views.MainWindow"
+        Title="WhatsApp Chat Viewer"
+        Width="1380"
+        Height="840"
+        MinWidth="920"
+        MinHeight="600"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackgroundBrush}">
+  <Window.Styles>
+    <Style Selector="ListBox.timeline">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="26,16" />
+      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
+      <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="False" />
+    </Style>
+    <Style Selector="ListBox.timeline ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="FocusAdorner" Value="{x:Null}" />
+    </Style>
+    <Style Selector="ListBox.timeline ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBox.timeline ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="TextBox.search-box">
+      <Setter Property="Background" Value="#202C33" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="38,7,14,7" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="TextBox.search-box:focus">
+      <Setter Property="BorderBrush" Value="#2A3942" />
+    </Style>
+    <Style Selector="ListBox.chat-selector">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    </Style>
+    <Style Selector="ListBox.chat-selector ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="FocusAdorner" Value="{x:Null}" />
+    </Style>
+    <Style Selector="ListBox.chat-selector ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#202C33" />
+    </Style>
+    <Style Selector="ListBox.chat-selector ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#2A3942" />
+    </Style>
+    <Style Selector="Button.attachment-card">
+      <Setter Property="Background" Value="#18252C" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="Padding" Value="12" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+    <Style Selector="CalendarDatePicker.jump-picker">
+      <Setter Property="Height" Value="42" />
+      <Setter Property="Background" Value="#111B21" />
+      <Setter Property="BorderBrush" Value="#3B4A54" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+    <Style Selector="TimePicker.jump-picker">
+      <Setter Property="Height" Value="42" />
+      <Setter Property="Background" Value="#111B21" />
+      <Setter Property="BorderBrush" Value="#3B4A54" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+    <Style Selector="TextBlock.jump-label">
+      <Setter Property="FontSize" Value="10" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+      <Setter Property="LetterSpacing" Value="0.8" />
+    </Style>
+    <Style Selector="FlyoutPresenter">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+  </Window.Styles>
+
+  <Grid ColumnDefinitions="64,310,1,*">
+    <!-- Navigation rail -->
+    <Border Grid.Column="0" Background="#202C33" Padding="0,12">
+    <Grid RowDefinitions="72,Auto,Auto,*">
+      <Border Width="42" Height="42" CornerRadius="21" Background="{StaticResource PrimaryBrush}" HorizontalAlignment="Center">
+        <PathIcon Data="{StaticResource PhoneIcon}" Width="21" Height="21" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Border>
+      <Border Grid.Row="1" Width="3" Height="28" CornerRadius="0,2,2,0" Background="{StaticResource PrimaryBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,8,0,0" />
+      <Button Grid.Row="1" Classes="icon-button" HorizontalAlignment="Center" Margin="0,8,0,0">
+        <PathIcon Data="{StaticResource ChatIcon}" Width="19" Height="19" />
+        <ToolTip.Tip>Chats</ToolTip.Tip>
+      </Button>
+      <Button Grid.Row="2"
+              AutomationProperties.Name="Add chat export"
+              Classes="icon-button"
+              HorizontalAlignment="Center"
+              Margin="0,5,0,0"
+              Click="OpenArchive_Click">
+        <PathIcon Data="{StaticResource PlusIcon}" Width="19" Height="19" />
+        <ToolTip.Tip>Add chat export</ToolTip.Tip>
+      </Button>
+    </Grid>
+    </Border>
+
+    <!-- Conversation list and archive details -->
+    <Grid Grid.Column="1" Background="{StaticResource PanelBrush}" RowDefinitions="68,58,Auto,*,Auto">
+      <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+        <TextBlock Text="Chats" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center" Margin="18,0,0,0" />
+        <Button Grid.Column="1" Classes="icon-button" VerticalAlignment="Center" Margin="0,0,10,0" Click="OpenArchive_Click">
+          <PathIcon Data="{StaticResource PlusIcon}" Width="18" Height="18" />
+          <ToolTip.Tip>Open another export</ToolTip.Tip>
+        </Button>
+      </Grid>
+
+      <Grid Grid.Row="1" Margin="12,6,12,10">
+          <TextBox x:Name="SearchBox"
+                   Classes="search-box"
+                   PlaceholderText="Search messages"
+                   Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                   Padding="40,7,14,7" />
+          <PathIcon Data="{StaticResource SearchIcon}"
+                    Width="17"
+                    Height="17"
+                    Foreground="#8696A0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Margin="15,0,0,0"
+                    IsHitTestVisible="False" />
+      </Grid>
+
+      <ListBox Grid.Row="2"
+               Classes="chat-selector"
+               ItemsSource="{Binding Chats}"
+               SelectedItem="{Binding SelectedChat, Mode=TwoWay}"
+               MaxHeight="246"
+               IsVisible="{Binding HasChat}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Grid ColumnDefinitions="52,*,Auto" Margin="12">
+              <Border Width="46" Height="46" CornerRadius="23" Background="#607D8B">
+                <TextBlock Text="{Binding ContactInitial}"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+              </Border>
+              <StackPanel Grid.Column="1" Margin="11,2,8,0" Spacing="4">
+                <TextBlock Text="{Binding Title}" FontSize="16" TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{Binding LastMessagePreview}"
+                           FontSize="12"
+                           Foreground="#8696A0"
+                           TextTrimming="CharacterEllipsis" />
+              </StackPanel>
+              <TextBlock Grid.Column="2"
+                         Text="ZIP"
+                         FontSize="10"
+                         Foreground="{StaticResource PrimaryBrightBrush}"
+                         Margin="0,4,0,0" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <StackPanel Grid.Row="3" Margin="18,22" Spacing="14" IsVisible="{Binding HasChat}">
+        <TextBlock Text="ARCHIVE DETAILS" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBrush}" />
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Text="Messages" Foreground="#8696A0" />
+          <TextBlock Grid.Column="1" Text="{Binding MessageCountText}" />
+        </Grid>
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Text="Media &amp; files" Foreground="#8696A0" />
+          <TextBlock Grid.Column="1" Text="{Binding MediaCountText}" />
+        </Grid>
+        <TextBlock Text="{Binding RangeText}" FontSize="12" Foreground="#8696A0" TextWrapping="Wrap" />
+        <Border Height="1" Background="#233138" Margin="0,4" />
+        <TextBlock Text="Messages sent by you" FontSize="12" Foreground="#8696A0" />
+        <ComboBox ItemsSource="{Binding Participants}"
+                  SelectedItem="{Binding SelectedIdentity, Mode=TwoWay}"
+                  HorizontalAlignment="Stretch"
+                  PlaceholderText="Choose your name" />
+        <TextBlock Text="This determines which bubbles appear on the right."
+                   FontSize="11"
+                   Foreground="#667781"
+                   TextWrapping="Wrap" />
+      </StackPanel>
+
+      <Border Grid.Row="4" Padding="16,13" BorderBrush="#233138" BorderThickness="0,1,0,0">
+        <StackPanel Spacing="4">
+          <TextBlock Text="{Binding ArchiveName}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+          <TextBlock Text="{Binding ArchiveDetails}" FontSize="11" Foreground="#8696A0" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding StatusText}" FontSize="11" Foreground="{StaticResource PrimaryBrush}" TextWrapping="Wrap" />
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <Border Grid.Column="2" Background="#2A3942" />
+
+    <!-- Active conversation -->
+    <Grid Grid.Column="3" RowDefinitions="64,*">
+      <Grid Grid.Row="0" Background="{StaticResource HeaderBrush}" ColumnDefinitions="Auto,*,Auto,Auto">
+        <Border Width="42" Height="42" CornerRadius="21" Background="#607D8B" VerticalAlignment="Center" Margin="13,0,0,0">
+          <TextBlock Text="{Binding ContactInitial}" FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+        <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center" Spacing="2">
+          <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" />
+          <TextBlock Text="{Binding Subtitle}" FontSize="12" Foreground="#8696A0" />
+        </StackPanel>
+
+        <TextBlock Grid.Column="2"
+                   Text="{Binding SearchResultText}"
+                   IsVisible="{Binding HasSearchResultText}"
+                   Foreground="#8696A0"
+                   FontSize="12"
+                   VerticalAlignment="Center"
+                   Margin="8,0" />
+
+        <Button x:Name="JumpMenuButton"
+                Grid.Column="3"
+                AutomationProperties.Name="Jump to date and time"
+                Classes="icon-button"
+                VerticalAlignment="Center"
+                Margin="0,0,10,0">
+          <PathIcon Data="{StaticResource ClockIcon}" Width="19" Height="19" />
+          <ToolTip.Tip>Jump to date and time</ToolTip.Tip>
+          <Button.Flyout>
+            <Flyout Placement="BottomEdgeAlignedRight" ShowMode="TransientWithDismissOnPointerMoveAway">
+              <Border Width="460"
+                      Background="#202C33"
+                      BorderBrush="#34434B"
+                      BorderThickness="1"
+                      CornerRadius="12"
+                      ClipToBounds="True">
+                <Grid RowDefinitions="Auto,Auto">
+                  <Border Background="#233138" Padding="20,17">
+                    <Grid ColumnDefinitions="42,*" ColumnSpacing="13">
+                      <Border Width="42"
+                              Height="42"
+                              CornerRadius="21"
+                              Background="#193C38">
+                        <PathIcon Data="{StaticResource ClockIcon}"
+                                  Width="20"
+                                  Height="20"
+                                  Foreground="{StaticResource PrimaryBrush}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center" />
+                      </Border>
+                      <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
+                        <TextBlock Text="Jump to date &amp; time"
+                                   FontSize="17"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Text="Find the first message at or after a precise moment."
+                                   FontSize="11"
+                                   Foreground="#8696A0"
+                                   TextWrapping="Wrap" />
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+
+                  <Grid Grid.Row="1"
+                        RowDefinitions="Auto,Auto"
+                        Margin="20,18,20,20"
+                        RowSpacing="17">
+                    <Grid ColumnDefinitions="*,154" ColumnSpacing="12">
+                      <StackPanel Spacing="7">
+                        <TextBlock Classes="jump-label" Text="DATE" />
+                        <CalendarDatePicker Classes="jump-picker"
+                                            PlaceholderText="Choose a date"
+                                            SelectedDate="{Binding JumpDate, Mode=TwoWay}" />
+                      </StackPanel>
+
+                      <StackPanel Grid.Column="1" Spacing="7">
+                        <TextBlock Classes="jump-label" Text="TIME" />
+                        <TimePicker Classes="jump-picker"
+                                    SelectedTime="{Binding JumpTime, Mode=TwoWay}"
+                                    ClockIdentifier="24HourClock" />
+                      </StackPanel>
+                    </Grid>
+
+                    <Grid Grid.Row="1"
+                          ColumnDefinitions="*,Auto"
+                          ColumnSpacing="14"
+                          Margin="0,0,0,0">
+                      <TextBlock Text="Uses timestamps recorded in the export"
+                                 FontSize="11"
+                                 Foreground="#667781"
+                                 TextWrapping="Wrap"
+                                 VerticalAlignment="Center" />
+                      <Button Grid.Column="1"
+                              AutomationProperties.Name="Jump to message"
+                              Classes="primary"
+                              Content="Jump to message"
+                              Command="{Binding JumpCommand}"
+                              Click="Jump_Click"
+                              MinWidth="154"
+                              Height="42"
+                              CornerRadius="8"
+                              HorizontalAlignment="Right" />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Border>
+            </Flyout>
+          </Button.Flyout>
+        </Button>
+
+      </Grid>
+
+      <Grid Grid.Row="1" ColumnDefinitions="*,12">
+        <controls:ChatWallpaperControl x:Name="ChatWallpaper" Grid.ColumnSpan="2" />
+
+        <ListBox x:Name="ChatList"
+                 Grid.Column="0"
+                 Classes="timeline"
+                 ItemsSource="{Binding Items}">
+          <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+              <VirtualizingStackPanel CacheLength="1.25" />
+            </ItemsPanelTemplate>
+          </ListBox.ItemsPanel>
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Grid>
+                <Border IsVisible="{Binding IsDateSeparator}"
+                        HorizontalAlignment="Center"
+                        Margin="0,10,0,8"
+                        Padding="12,6"
+                        CornerRadius="8"
+                        Background="#182229">
+                  <TextBlock Text="{Binding DateLabel}" FontSize="11" Foreground="#8696A0" />
+                </Border>
+
+                <Border IsVisible="{Binding IsSystem}"
+                        HorizontalAlignment="Center"
+                        MaxWidth="620"
+                        Margin="20,5"
+                        Padding="12,6"
+                        CornerRadius="8"
+                        Background="#182229">
+                  <TextBlock Text="{Binding SystemText}"
+                             FontSize="11"
+                             Foreground="#8696A0"
+                             TextAlignment="Center"
+                             TextWrapping="Wrap" />
+                </Border>
+
+                <Grid IsVisible="{Binding IsMessage}" Margin="{Binding ItemMargin}">
+                  <Grid HorizontalAlignment="{Binding BubbleAlignment}" MaxWidth="720">
+                    <Path IsVisible="{Binding ShowIncomingTail}"
+                          Data="M 8,0 L 0,0 L 8,8 Z"
+                          Fill="{Binding BubbleBrush}"
+                          Width="8"
+                          Height="8"
+                          Stretch="Fill"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Margin="-7,0,0,0" />
+                    <Path IsVisible="{Binding ShowOutgoingTail}"
+                          Data="M 0,0 L 8,0 L 0,8 Z"
+                          Fill="{Binding BubbleBrush}"
+                          Width="8"
+                          Height="8"
+                          Stretch="Fill"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Top"
+                          Margin="0,0,-7,0" />
+                    <Border
+                          Padding="6"
+                          CornerRadius="{Binding BubbleCornerRadius}"
+                          Background="{Binding BubbleBrush}"
+                          BorderBrush="{Binding HighlightBorderBrush}"
+                          BorderThickness="{Binding HighlightBorderThickness}">
+                    <StackPanel Spacing="3">
+                      <TextBlock Text="{Binding SenderText}"
+                                 IsVisible="{Binding ShowSender}"
+                                 Foreground="#53BDEB"
+                                 FontSize="12"
+                                 FontWeight="SemiBold"
+                                 Margin="6,2,6,0" />
+
+                      <controls:LazyArchiveImage IsVisible="{Binding IsImage}" Height="{Binding ImageHeight}" />
+
+                      <controls:LazyArchiveVideoPlayer IsVisible="{Binding IsVideo}" Width="420" Height="236" />
+
+                      <Button IsVisible="{Binding IsFileCard}"
+                              Classes="attachment-card"
+                              Command="{Binding OpenAttachmentCommand}">
+                        <Grid ColumnDefinitions="48,*,Auto">
+                          <Border Width="42" Height="42" CornerRadius="21" Background="#2A3942">
+                            <TextBlock Text="{Binding AttachmentIcon}" FontSize="19" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                          </Border>
+                          <StackPanel Grid.Column="1" Margin="10,1" Spacing="3">
+                            <TextBlock Text="{Binding AttachmentName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="430" />
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                              <TextBlock Text="{Binding AttachmentTypeText}" FontSize="10" Foreground="#8696A0" />
+                              <TextBlock Text="·" FontSize="10" Foreground="#8696A0" />
+                              <TextBlock Text="{Binding AttachmentSize}" FontSize="10" Foreground="#8696A0" />
+                            </StackPanel>
+                          </StackPanel>
+                          <TextBlock Grid.Column="2" Text="↗" Foreground="#8696A0" VerticalAlignment="Center" Margin="8,0,2,0" />
+                        </Grid>
+                      </Button>
+
+                      <Border IsVisible="{Binding HasMissingAttachment}"
+                              Background="#18252C"
+                              CornerRadius="7"
+                              Padding="12">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                          <TextBlock Text="⚠" Foreground="#F7C948" FontSize="17" />
+                          <StackPanel>
+                            <TextBlock Text="{Binding AttachmentName}" FontWeight="SemiBold" />
+                            <TextBlock Text="Not found in this ZIP" FontSize="11" Foreground="#8696A0" />
+                          </StackPanel>
+                        </StackPanel>
+                      </Border>
+
+                      <Grid MinHeight="17">
+                        <TextBlock Text="{Binding MessageText}"
+                                   IsVisible="{Binding HasText}"
+                                   Margin="6,1,88,1"
+                                   MaxWidth="650"
+                                   FontSize="14"
+                                   LineHeight="19"
+                                   Foreground="#E9EDEF"
+                                   TextWrapping="Wrap" />
+
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Spacing="4"
+                                    Margin="14,0,2,0">
+                          <TextBlock Text="edited" IsVisible="{Binding IsEdited}" FontSize="10" Foreground="#AAB7BE" FontStyle="Italic" />
+                          <TextBlock Text="{Binding TimeText}" FontSize="10" Foreground="#AAB7BE" />
+                          <Path IsVisible="{Binding IsMine}"
+                                Data="M 0.41,13.41 L 6,19 L 7.41,17.59 L 1.83,12 Z M 22.24,5.59 L 11.66,16.17 L 7.48,12 L 6.07,13.41 L 11.66,19 L 23.66,7 Z M 18,7 L 16.59,5.59 L 10.25,11.93 L 11.66,13.34 Z"
+                                Width="17"
+                                Height="11"
+                                Stretch="Uniform"
+                                Fill="#53BDEB"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Grid>
+                    </StackPanel>
+                    </Border>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ScrollBar x:Name="TimelineScrollBar"
+                   Grid.Column="1"
+                   Orientation="Vertical"
+                   Minimum="0"
+                   SmallChange="1"
+                   LargeChange="20"
+                   ViewportSize="20"
+                   IsVisible="{Binding HasChat}"
+                   AutomationProperties.Name="Chat position" />
+
+        <Border x:Name="CurrentDatePill"
+                Grid.Column="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Margin="0,10,0,0"
+                Padding="12,6"
+                CornerRadius="8"
+                Background="#182229"
+                BorderBrush="#26343B"
+                BorderThickness="1"
+                IsVisible="{Binding HasChat}"
+                IsHitTestVisible="False">
+          <TextBlock x:Name="CurrentDateText"
+                     FontSize="11"
+                     FontWeight="SemiBold"
+                     Foreground="#AEBAC1" />
+        </Border>
+
+        <Button Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="0,0,20,16"
+                Width="42"
+                Height="42"
+                CornerRadius="21"
+                Background="#202C33"
+                Foreground="#D1D7DB"
+                Click="ScrollToBottom_Click">
+          <PathIcon Data="{StaticResource ChevronDownIcon}" Width="18" Height="18" />
+          <ToolTip.Tip>Jump to latest message</ToolTip.Tip>
+        </Button>
+
+        <Border Grid.ColumnSpan="2" IsVisible="{Binding IsWelcomeVisible}" Background="#F20B141A">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Margin="30">
+            <Border Width="108" Height="108" CornerRadius="54" Background="#18252C">
+              <TextBlock Text="▧" FontSize="46" Foreground="{StaticResource PrimaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <TextBlock Text="View a WhatsApp export" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center" />
+            <TextBlock Text="Open the ZIP directly—there is no need to unpack it.&#10;Images are decoded only as they enter the visible timeline."
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       Foreground="#8696A0"
+                       MaxWidth="500" />
+            <Button Classes="primary" Content="Open export ZIP" HorizontalAlignment="Center" Click="OpenArchive_Click" />
+          </StackPanel>
+        </Border>
+
+        <Border Grid.ColumnSpan="2" IsVisible="{Binding IsBusy}" Background="#E60B141A">
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="14">
+            <ProgressBar Width="280" Height="5" IsIndeterminate="True" />
+            <TextBlock Text="{Binding StatusText}" Foreground="#AEBAC1" HorizontalAlignment="Center" />
+          </StackPanel>
+        </Border>
+
+        <Border Grid.ColumnSpan="2"
+                IsVisible="{Binding HasError}"
+                VerticalAlignment="Top"
+                Margin="18"
+                Padding="13,9"
+                CornerRadius="8"
+                Background="#7B2E2E">
+          <Grid ColumnDefinitions="Auto,*,Auto">
+            <TextBlock Text="⚠" Margin="0,0,10,0" />
+            <TextBlock Grid.Column="1" Text="{Binding ErrorText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+            <Button Grid.Column="2" Classes="icon-button" Content="×" Click="DismissError_Click" />
+          </Grid>
+        </Border>
+      </Grid>
+
+    </Grid>
+  </Grid>
+</Window>

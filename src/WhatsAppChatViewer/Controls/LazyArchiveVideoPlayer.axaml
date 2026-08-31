@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="WhatsAppChatViewer.Controls.LazyArchiveVideoPlayer"
+             MinHeight="190"
+             Focusable="True">
+  <Border CornerRadius="8"
+          ClipToBounds="True"
+          Background="#080D10">
+    <Grid>
+      <ContentControl x:Name="VideoHost"
+                      HorizontalContentAlignment="Stretch"
+                      VerticalContentAlignment="Stretch" />
+
+      <Grid x:Name="IdlePanel" Background="#17242B">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+          <Button x:Name="StartButton"
+                  AutomationProperties.Name="Play video"
+                  Width="64"
+                  Height="64"
+                  Padding="0"
+                  CornerRadius="32"
+                  Background="#2A3942"
+                  Click="Start_Click">
+            <PathIcon Data="{StaticResource PlayIcon}"
+                      Width="29"
+                      Height="29"
+                      Margin="4,0,0,0"
+                      Foreground="White" />
+            <ToolTip.Tip>Play video from ZIP</ToolTip.Tip>
+          </Button>
+          <TextBlock x:Name="IdleTitle"
+                     MaxWidth="340"
+                     FontSize="13"
+                     FontWeight="SemiBold"
+                     TextAlignment="Center"
+                     TextTrimming="CharacterEllipsis" />
+          <TextBlock x:Name="IdleDetails"
+                     Foreground="#8696A0"
+                     FontSize="11"
+                     HorizontalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+
+      <Grid x:Name="PreparingPanel" IsVisible="False" Background="#E617242B">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+          <ProgressBar Width="150" Height="4" IsIndeterminate="True" />
+          <TextBlock x:Name="PreparingText"
+                     Text="Preparing video from ZIP…"
+                     FontSize="12"
+                     Foreground="#D1D7DB"
+                     HorizontalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+
+      <Grid x:Name="ErrorPanel" IsVisible="False" Background="#17242B">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+          <TextBlock Text="!" FontSize="28" Foreground="#F7C948" HorizontalAlignment="Center" />
+          <TextBlock x:Name="ErrorText"
+                     Text="Video could not be played"
+                     MaxWidth="340"
+                     TextAlignment="Center"
+                     TextWrapping="Wrap"
+                     Foreground="#D1D7DB" />
+          <Button Content="Try again" Classes="primary" Click="Retry_Click" />
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

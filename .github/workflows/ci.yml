@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore WhatsAppChatViewer.slnx
+
+      - name: Build
+        run: dotnet build WhatsAppChatViewer.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test WhatsAppChatViewer.slnx --configuration Release --no-build
