@@ -10,6 +10,16 @@ uploading your conversations anywhere.
 > This independent project is not affiliated with, endorsed by, or sponsored
 > by WhatsApp or Meta. WhatsApp is a trademark of its respective owner.
 
+## Download
+
+Download the self-contained Windows x64 ZIP from the
+[latest release](https://github.com/VictorZakharov/whatsapp-chat-viewer/releases/latest),
+extract the complete folder, and run `WhatsAppChatViewer.exe`. The .NET runtime
+and LibVLC are included. Each release also includes a SHA-256 checksum file.
+
+The application is not code-signed yet, so Windows SmartScreen may display a
+warning on first launch.
+
 ## Highlights
 
 - Open one or several WhatsApp export ZIPs and switch between chats. Invalid or
@@ -110,3 +120,5 @@ exports and screenshots. Security reports belong in [SECURITY.md](SECURITY.md).
 Original source code is licensed under the [MIT License](LICENSE).
 LibVLCSharp, LibVLC, and other dependencies retain their own licenses. See
 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) and [LICENSES](LICENSES).
+
+Release history is available in [CHANGELOG.md](CHANGELOG.md).

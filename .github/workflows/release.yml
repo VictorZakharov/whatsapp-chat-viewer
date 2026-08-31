@@ -1,0 +1,73 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  windows-x64:
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Restore Windows runtime
+        run: dotnet restore src/WhatsAppChatViewer/WhatsAppChatViewer.csproj --runtime win-x64
+
+      - name: Publish self-contained Windows build
+        run: >-
+          dotnet publish src/WhatsAppChatViewer/WhatsAppChatViewer.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          --no-restore
+          --output artifacts/publish/win-x64
+
+      - name: Remove unused LibVLC architectures
+        shell: pwsh
+        run: |
+          Remove-Item -LiteralPath "artifacts/publish/win-x64/libvlc/win-arm64" -Recurse -Force
+          Remove-Item -LiteralPath "artifacts/publish/win-x64/libvlc/win-x86" -Recurse -Force
+
+      - name: Package release and checksum
+        id: package
+        shell: pwsh
+        run: |
+          $archiveName = "WhatsAppChatViewer-$env:GITHUB_REF_NAME-win-x64.zip"
+          $archivePath = Join-Path "artifacts" $archiveName
+          Compress-Archive `
+            -Path "artifacts/publish/win-x64/*" `
+            -DestinationPath $archivePath `
+            -CompressionLevel Optimal
+
+          $hash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $archiveName" | Set-Content `
+            -LiteralPath "$archivePath.sha256" `
+            -Encoding ascii `
+            -NoNewline
+
+          "archive=$archivePath" >> $env:GITHUB_OUTPUT
+          "checksum=$archivePath.sha256" >> $env:GITHUB_OUTPUT
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          gh release create "$env:GITHUB_REF_NAME" `
+            "${{ steps.package.outputs.archive }}" `
+            "${{ steps.package.outputs.checksum }}" `
+            --verify-tag `
+            --generate-notes `
+            --title "WhatsApp Chat Viewer $env:GITHUB_REF_NAME"
